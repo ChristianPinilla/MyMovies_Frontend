@@ -37,8 +37,16 @@
         <!-- <div class="movies-container"> -->
             <div class="movies">
                 <div class="icons">
-                    <span>izq</span>
-                    <span>der</span>
+                    <span v-if="selected_movie_index > 0"
+                        @click="updateSelectedMovie(movies[selected_movie_index - 1], selected_movie_index - 1)">
+                        <font-awesome-icon :icon="['fas', 'chevron-left']" /> 
+                    </span>
+                    <div v-else></div>
+
+                    <span v-if="selected_movie_index < movies.length - 1"
+                        @click="updateSelectedMovie(movies[selected_movie_index + 1], selected_movie_index + 1)">
+                        <font-awesome-icon :icon="['fas', 'chevron-right']" /> 
+                    </span>
                 </div>
                 <ul v-if="movies.length !== 0" class="movies_lista" id="movies_lista">
                     <li v-for="(movie, index) in movies" :key="index" class="movie movie-container" @click="updateSelectedMovie(movie, index)" :id="'movie_'+movie.id">
@@ -108,6 +116,7 @@
                 poster_url: 'https://www.themoviedb.org/t/p/w600_and_h900_bestv2',
                 language: 'es-ES',
 
+                selected_movie_index: 0,
                 selected_movie: {},
                 movies: [],
 
@@ -189,6 +198,7 @@
                 document.getElementById(`movie_${movie.id}`).classList.add('clicked_movie');
                 document.getElementById('movies_lista').style.transform = `translateX(${-23*index}rem)`;
                 this.selected_movie = movie;
+                this.selected_movie_index = index;
             }
         },
         async mounted(){
@@ -318,97 +328,122 @@
             transition: all .5s ease;
         }
 
-    /* LEFT SECTION */
+    /* ---------------INICIO LISTA DE PELICULAS--------------- */
     .movies{
         width: 100vw;
         height: max-content;
         margin: auto 2rem;
+        position: relative;
     }
-        .movies .icons{
-            display: flex;
-            width: 97.5vw;
-            margin: auto 2rem;
-            justify-content: end;
-        }
+    .movies .icons{
+        width: 100vw;
+        height: 100%;
+        color: white;
+        position: absolute;
+        left: -2rem;
+        display: flex;
+        justify-content: space-between;
+    }
 
-        .movies_lista{
-            height: 100%;
-            display: flex;
-            width: max-content;
-            transition: all .6s ease;
-        }
+    .movies .icons span{
+        height: 100%;
+        width: 3.5rem;
+        color: transparent;
+        position: relative;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        z-index: 100;
+        transition: all .3s ease;
+    }
 
-        .movies .movie{
-            width: 22rem;
-            position: relative;
-            margin-right: 1rem;
-            cursor: pointer;
-            top:0;
-            transition: all .5s ease;
-            position: relative;
-        }
-        .movies .movie .image-container,
-        .movies .movie img{
-            margin-left: auto;
-            height: 31rem;
-            width: 100%;
-            border-radius: 2px
-        }
-        .movies .movie img{
-            box-shadow: 0 2px 4px rgba(0,0,0,.15);
-        }
-        .movies .movie .image-loading{
-            object-fit: cover;
-        }
+    .movies .icons span:hover{
+        background-color: rgba(0,0,0,.7);
+        transition: all .5s ease;
+        color: white;
+        cursor: pointer
+    }
 
-        .movie-container{
-            opacity: 0;
-            animation: fadeIn .75s ease forwards;
-        }
+    .movies_lista{
+        height: 100%;
+        display: flex;
+        width: max-content;
+        transition: all .6s ease;
+        padding-left: 2rem;
+    }
 
-        .movies .movie .gradient{
-            width: 100%;
-            height: 31rem;
-            position: absolute;
-            top: 0;
-            background: rgba(0,0,0,.4);
-            box-shadow: 0 2px 4px rgba(0,0,0,.15);
-            transition: all .3s ease;
-        }
-        .movies .movie .movie_title{
-            color: rgba(0,0,0,.5);
-            font-size: 1.7rem;
-            font-weight: bold;
-            margin-top: .8rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,.15);
-            transition: all .3s ease;
-            position: absolute;
-        }
+    .movies .movie{
+        width: 22rem;
+        position: relative;
+        margin-right: 1rem;
+        cursor: pointer;
+        top:0;
+        transition: all .5s ease;
+        position: relative;
+    }
+    .movies .movie .image-container,
+    .movies .movie img{
+        margin-left: auto;
+        height: 31rem;
+        width: 100%;
+        border-radius: 2px
+    }
+    .movies .movie img{
+        box-shadow: 0 2px 4px rgba(0,0,0,.15);
+    }
+    .movies .movie .image-loading{
+        object-fit: cover;
+    }
 
-        .movies .clicked_movie{
-            top: -2rem;
-        }
-        .movies .clicked_movie .gradient{
-            background: transparent;
-        }
-        .movies .clicked_movie .movie_title{
-            color: rgba(0,0,0,.8);
-        }
+    .movie-container{
+        opacity: 0;
+        animation: fadeIn .75s ease forwards;
+    }
 
-        @keyframes infinite_slider {
-            0%{
-                -webkit-transform: translateX(0);
-                transform: translateX(0)
-            }
-            100%{
-                -webkit-transform: translateX(calc(-14rem * 12));
-                transform: translateX(calc(-14rem * 12));
-            }
-        }
+    .movies .movie .gradient{
+        width: 100%;
+        height: 31rem;
+        position: absolute;
+        top: 0;
+        background: rgba(0,0,0,.4);
+        box-shadow: 0 2px 4px rgba(0,0,0,.15);
+        transition: all .3s ease;
+    }
+    .movies .movie .movie_title{
+        color: rgba(0,0,0,.5);
+        font-size: 1.7rem;
+        font-weight: bold;
+        margin-top: .8rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,.15);
+        transition: all .3s ease;
+        position: absolute;
+    }
 
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-            }
+    .movies .clicked_movie{
+        top: -2rem;
+    }
+    .movies .clicked_movie .gradient{
+        background: transparent;
+    }
+    .movies .clicked_movie .movie_title{
+        color: rgba(0,0,0,.8);
+    }
+
+    @keyframes infinite_slider {
+        0%{
+            -webkit-transform: translateX(0);
+            transform: translateX(0)
         }
+        100%{
+            -webkit-transform: translateX(calc(-14rem * 12));
+            transform: translateX(calc(-14rem * 12));
+        }
+    }
+
+    @keyframes fadeIn {
+        to {
+            opacity: 1;
+        }
+    }
+    /* ---------------FIN LISTA DE PELICULAS--------------- */
 </style>
